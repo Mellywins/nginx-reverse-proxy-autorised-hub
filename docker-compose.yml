@@ -1,0 +1,28 @@
+version: '3.7'
+services: 
+    nginx:
+        image: jonasal/nginx-certbot:latest
+        restart: unless-stopped
+        container_name: Digigo-Reverse-Proxy
+        environment:
+            CERTBOT_EMAIL: ${CERTBOT_EMAIL}
+            STAGING: ${STAGING}
+            DHPARAM_SIZE: ${DHPARAM_SIZE}
+            RSA_KEY_SIZE: ${RSA_KEY_SIZE}
+            ELLIPTIC_CURVE: ${ELLIPTIC_CURVE}
+            USE_ECDSA: ${USE_ECDSA}
+            RENEWAL_INTERVAL: ${RENEWAL_INTERVAL}
+            DEBUG: ${DEBUG}
+        env_file: .env
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - nginx_secrets:/etc/letsencrypt
+            - ./nginx:/etc/nginx/user_conf.d:ro
+        networks: 
+            - proxy_net
+networks: 
+    proxy_net:
+volumes: 
+    nginx_secrets:
